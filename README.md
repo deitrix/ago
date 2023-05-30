@@ -17,19 +17,19 @@ the `AGO_CONFIG_DIR` environment variable.
 
 Define a package alias:
     
-    $ ago alias foo github.com/foo/bar/v2
+    ago alias foo github.com/foo/bar/v2
 
 Get a package using the alias:
 
-    $ ago get foo
+    ago get foo
 
 List package aliases:
 
-    $ ago alias ls
+    ago alias ls
 
 Remove a package alias:
 
-    $ ago alias rm foo
+    ago alias rm foo
 
 ## TODO
 
