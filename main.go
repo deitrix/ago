@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sort"
 	"strings"
 	"text/tabwriter"
 )
@@ -97,11 +98,23 @@ func main() {
 			fmt.Print(aliasUsage)
 			return
 		case "list", "ls", "l":
+			type row struct {
+				alias string
+				pkg   string
+			}
+			var rows []row
+			for alias, pkg := range aliases {
+				rows = append(rows, row{alias, pkg})
+			}
+			sort.Slice(rows, func(i, j int) bool {
+				return rows[i].alias < rows[j].alias
+			})
+
 			tw := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 			fmt.Fprintln(tw, "ALIAS\tPACKAGE")
 			fmt.Fprintln(tw, "-----\t-------")
-			for alias, pkg := range aliases {
-				fmt.Fprintf(tw, "%s\t%s\n", alias, pkg)
+			for _, row := range rows {
+				fmt.Fprintf(tw, "%s\t%s\n", row.alias, row.pkg)
 			}
 			tw.Flush()
 			return
