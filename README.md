@@ -17,16 +17,20 @@ the `AGO_CONFIG_DIR` environment variable.
 
 Define a package alias:
     
-    ago alias github.com/username/project myproject
+    $ ago alias foo github.com/foo/bar/v2
 
 Get a package using the alias:
 
-    ago get myproject
+    $ ago get foo
 
 List package aliases:
 
-    ago alias ls
+    $ ago alias ls
 
 Remove a package alias:
 
-    ago alias rm myproject
+    $ ago alias rm foo
+
+## TODO
+
+- [ ] Make `ago help` a bit more consistent with `go help`

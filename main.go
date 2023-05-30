@@ -78,7 +78,7 @@ func main() {
 	switch args[1] {
 	case "help":
 		fmt.Print(agoUsage)
-		break
+		return
 	case "get", "install":
 		if len(args) > 2 {
 			for i := 2; i < len(args); i++ {
