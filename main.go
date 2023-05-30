@@ -62,7 +62,6 @@ The sub-commands are:
 `
 
 func main() {
-	// XDG Base Directory paths.
 	if len(os.Args) < 2 {
 		fmt.Print(agoUsage)
 		return
