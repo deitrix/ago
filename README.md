@@ -6,7 +6,7 @@ other flags and arguments are passed through to the go command.
 
 ## Installation
 
-    go get github.com/deitrix/ago
+    go install github.com/deitrix/ago@latest
 
 ## Configuration
 
