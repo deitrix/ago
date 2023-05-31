@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 	"text/tabwriter"
 )
@@ -82,9 +83,67 @@ func main() {
 	case "get", "install":
 		if len(args) > 2 {
 			for i := 2; i < len(args); i++ {
-				if alias, ok := aliases[args[i]]; ok {
-					args[i] = alias
+				arg := args[i]
+
+				// Find the alias with the longest matching prefix.
+				var alias string
+				var pkg string
+				for a, p := range aliases {
+					if strings.HasPrefix(arg, a) && len(a) > len(alias) {
+						alias = a
+						pkg = p
+					}
 				}
+				if alias == "" {
+					continue
+				}
+
+				// If the user is requesting a specific version, extract it.
+				var version string
+				if idx := strings.LastIndex(arg, "@"); idx != -1 {
+					version = arg[idx:]
+					arg = arg[:idx]
+				}
+
+				pkgPath := strings.TrimPrefix(arg, alias)
+
+				// If the package path starts with a major version, then we need
+				// to strip it off and replace it with the aliased package path.
+				var major string
+				if split := strings.SplitN(pkgPath, "/", 3); len(split) > 1 {
+					if split[1][0] == 'v' {
+						if _, err := strconv.Atoi(split[1][1:]); err == nil {
+							major = "/" + split[1]
+							if len(split) > 2 {
+								pkgPath = "/" + split[2]
+							} else {
+								pkgPath = ""
+							}
+						}
+					}
+				}
+
+				// If the user has requested a specific major version, and the
+				// aliased package path already contains a major version, then
+				// we need to strip it off and replace it with the requested
+				// major version. Unless the requested major version < 2, in
+				// which case we just strip it off.
+				if major != "" {
+					// Strip off the major version.
+					if idx := strings.LastIndex(pkg, "/v"); idx != -1 {
+						if _, err := strconv.Atoi(pkg[idx+2:]); err == nil {
+							pkg = pkg[:idx]
+						}
+					}
+
+					// If the requested major version is < 2, then set it to
+					// the empty string.
+					if len(major) == 3 && (major[2] == '0' || major[2] == '1') {
+						major = ""
+					}
+				}
+
+				args[i] = pkg + major + pkgPath + version
 			}
 		}
 	case "alias", "a":
